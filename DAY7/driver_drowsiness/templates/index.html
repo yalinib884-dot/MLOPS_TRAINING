@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Driver Drowsiness Detection System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Driver Drowsiness Detection System</h1>
+
+    <h2>YOLOv8 Based Real-Time Monitoring</h2>
+
+    <ul>
+        <li>👁 Open Eye Detection</li>
+        <li>😴 Closed Eye Detection</li>
+        <li>🥱 Yawning Detection</li>
+        <li>📱 Mobile Usage Detection</li>
+        <li>⚠ Distracted Driver Detection</li>
+    </ul>
+
+    <button onclick="window.location.href='/monitor'">
+    Start Monitoring
+    </button>
+    <button>View Report</button>
+
+</div>
+
+</body>
+</html>

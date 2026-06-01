@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Monitoring</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Live Driver Monitoring</h1>
+
+<img src="{{ url_for('video_feed') }}" width="800">
+
+<br><br>
+
+<button onclick="window.location.href='/'">
+    Back Home
+</button>
+
+</div>
+
+</body>
+</html>
