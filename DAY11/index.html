@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0a0a0f;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(0,255,180,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(0,180,255,0.04) 0%, transparent 60%);
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .calc-wrapper {
+      position: relative;
+    }
+
+    .calc-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #00ffb4, #0070ff, #00ffb4);
+      background-size: 200% 200%;
+      animation: borderAnim 4s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes borderAnim {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .calculator {
+      position: relative;
+      z-index: 1;
+      background: #12121a;
+      border-radius: 18px;
+      padding: 24px;
+      width: 320px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    /* Display */
+    .display {
+      background: #07070e;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      min-height: 96px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-end;
+      border: 1px solid rgba(0,255,180,0.1);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .display::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,255,180,0.015) 2px,
+        rgba(0,255,180,0.015) 4px
+      );
+      pointer-events: none;
+    }
+
+    .expression {
+      font-size: 13px;
+      color: rgba(0,255,180,0.4);
+      min-height: 18px;
+      letter-spacing: 1px;
+      word-break: break-all;
+      text-align: right;
+    }
+
+    .result {
+      font-family: 'Orbitron', monospace;
+      font-size: 36px;
+      font-weight: 700;
+      color: #00ffb4;
+      letter-spacing: 2px;
+      word-break: break-all;
+      text-align: right;
+      text-shadow: 0 0 20px rgba(0,255,180,0.5);
+      transition: font-size 0.1s;
+    }
+
+    /* Button Grid */
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 16px;
+      height: 58px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.08s, box-shadow 0.08s, background 0.1s;
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 1px;
+    }
+
+    button::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background 0.1s;
+    }
+
+    button:active::after { background: rgba(255,255,255,0.08); }
+    button:active { transform: scale(0.94); }
+
+    /* Number buttons */
+    .btn-num {
+      background: #1e1e2e;
+      color: #e0e0ff;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .btn-num:hover { background: #252538; box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07); }
+
+    /* Operator buttons */
+    .btn-op {
+      background: #0e2a2a;
+      color: #00ffb4;
+      border: 1px solid rgba(0,255,180,0.15);
+      box-shadow: 0 4px 12px rgba(0,255,180,0.06);
+    }
+    .btn-op:hover { background: #153838; box-shadow: 0 4px 20px rgba(0,255,180,0.15); }
+
+    /* Equals */
+    .btn-eq {
+      background: linear-gradient(135deg, #00c896, #0070ff);
+      color: #fff;
+      font-weight: 700;
+      font-size: 20px;
+      border: none;
+      box-shadow: 0 4px 20px rgba(0,200,150,0.3);
+    }
+    .btn-eq:hover { box-shadow: 0 4px 30px rgba(0,200,150,0.5); filter: brightness(1.1); }
+
+    /* Clear / special */
+    .btn-clear {
+      background: #1a0e0e;
+      color: #ff5f7e;
+      border: 1px solid rgba(255,95,126,0.15);
+      box-shadow: 0 4px 12px rgba(255,95,126,0.06);
+    }
+    .btn-clear:hover { background: #261216; box-shadow: 0 4px 20px rgba(255,95,126,0.15); }
+
+    .btn-misc {
+      background: #1a1628;
+      color: #b0a0ff;
+      border: 1px solid rgba(176,160,255,0.12);
+    }
+    .btn-misc:hover { background: #211d32; }
+
+    /* Wide button (zero) */
+    .span2 { grid-column: span 2; }
+
+    /* Flash animation on equals */
+    @keyframes flash {
+      0%   { text-shadow: 0 0 20px rgba(0,255,180,0.5); }
+      50%  { text-shadow: 0 0 40px rgba(0,255,180,1), 0 0 80px rgba(0,255,180,0.4); }
+      100% { text-shadow: 0 0 20px rgba(0,255,180,0.5); }
+    }
+    .flash { animation: flash 0.3s ease; }
+  </style>
+</head>
+<body>
+  <div class="calc-wrapper">
+    <div class="calculator">
+      <div class="display">
+        <div class="expression" id="expression"></div>
+        <div class="result" id="result">0</div>
+      </div>
+      <div class="buttons">
+        <button class="btn-clear"       onclick="clearAll()">AC</button>
+        <button class="btn-misc"        onclick="toggleSign()">+/−</button>
+        <button class="btn-misc"        onclick="percent()">%</button>
+        <button class="btn-op"          onclick="inputOp('/')">÷</button>
+
+        <button class="btn-num"         onclick="inputNum('7')">7</button>
+        <button class="btn-num"         onclick="inputNum('8')">8</button>
+        <button class="btn-num"         onclick="inputNum('9')">9</button>
+        <button class="btn-op"          onclick="inputOp('*')">×</button>
+
+        <button class="btn-num"         onclick="inputNum('4')">4</button>
+        <button class="btn-num"         onclick="inputNum('5')">5</button>
+        <button class="btn-num"         onclick="inputNum('6')">6</button>
+        <button class="btn-op"          onclick="inputOp('-')">−</button>
+
+        <button class="btn-num"         onclick="inputNum('1')">1</button>
+        <button class="btn-num"         onclick="inputNum('2')">2</button>
+        <button class="btn-num"         onclick="inputNum('3')">3</button>
+        <button class="btn-op"          onclick="inputOp('+')">+</button>
+
+        <button class="btn-num span2"   onclick="inputNum('0')">0</button>
+        <button class="btn-num"         onclick="inputDot()">.</button>
+        <button class="btn-eq"          onclick="calculate()">=</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let current = '0';
+    let expression = '';
+    let justEvaled = false;
+
+    const resultEl = document.getElementById('result');
+    const exprEl   = document.getElementById('expression');
+
+    function updateDisplay() {
+      resultEl.textContent = current;
+      exprEl.textContent   = expression;
+      resultEl.style.fontSize = current.length > 10 ? '22px' : current.length > 7 ? '28px' : '36px';
+    }
+
+    function inputNum(n) {
+      if (justEvaled) { expression = ''; justEvaled = false; }
+      current = current === '0' ? n : current + n;
+      updateDisplay();
+    }
+
+    function inputDot() {
+      if (justEvaled) { current = '0'; expression = ''; justEvaled = false; }
+      if (!current.includes('.')) current += '.';
+      updateDisplay();
+    }
+
+    function inputOp(op) {
+      justEvaled = false;
+      expression = current + ' ' + opSymbol(op) + ' ';
+      current    = '0';
+      // store raw op for eval
+      expression._rawOp = op;
+      updateDisplay();
+    }
+
+    // We store expression as a string but need the raw op; use a simple approach:
+    let storedLeft = null;
+    let storedOp   = null;
+
+    function inputOpFixed(op) {
+      justEvaled = false;
+      storedLeft = current;
+      storedOp   = op;
+      expression = current + ' ' + opSymbol(op) + ' ';
+      current    = '0';
+      updateDisplay();
+    }
+
+    function opSymbol(op) {
+      return op === '*' ? '×' : op === '/' ? '÷' : op === '-' ? '−' : '+';
+    }
+
+    function calculate() {
+      if (storedLeft === null) return;
+      const a = parseFloat(storedLeft);
+      const b = parseFloat(current);
+      let res;
+      switch(storedOp) {
+        case '+': res = a + b; break;
+        case '-': res = a - b; break;
+        case '*': res = a * b; break;
+        case '/': res = b === 0 ? 'Error' : a / b; break;
+        default:  res = b;
+      }
+      expression = storedLeft + ' ' + opSymbol(storedOp) + ' ' + current + ' =';
+      current    = res === 'Error' ? 'Error' : String(parseFloat(res.toFixed(10)));
+      storedLeft = null;
+      storedOp   = null;
+      justEvaled = true;
+      resultEl.classList.remove('flash');
+      void resultEl.offsetWidth;
+      resultEl.classList.add('flash');
+      updateDisplay();
+    }
+
+    function clearAll() {
+      current    = '0';
+      expression = '';
+      storedLeft = null;
+      storedOp   = null;
+      justEvaled = false;
+      updateDisplay();
+    }
+
+    function toggleSign() {
+      if (current === '0' || current === 'Error') return;
+      current = current.startsWith('-') ? current.slice(1) : '-' + current;
+      updateDisplay();
+    }
+
+    function percent() {
+      const n = parseFloat(current);
+      if (!isNaN(n)) { current = String(n / 100); updateDisplay(); }
+    }
+
+    // Override inputOp to use the fixed version
+    window.inputOp = inputOpFixed;
+
+    // Keyboard support
+    document.addEventListener('keydown', e => {
+      if (e.key >= '0' && e.key <= '9') inputNum(e.key);
+      else if (e.key === '.') inputDot();
+      else if (e.key === '+') inputOpFixed('+');
+      else if (e.key === '-') inputOpFixed('-');
+      else if (e.key === '*') inputOpFixed('*');
+      else if (e.key === '/') { e.preventDefault(); inputOpFixed('/'); }
+      else if (e.key === 'Enter' || e.key === '=') calculate();
+      else if (e.key === 'Escape') clearAll();
+      else if (e.key === 'Backspace') {
+        if (current.length > 1) current = current.slice(0, -1);
+        else current = '0';
+        updateDisplay();
+      }
+    });
+  </script>
+</body>
+</html>
