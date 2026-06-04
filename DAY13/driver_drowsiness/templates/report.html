@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Session Report</title>
+</head>
+<body>
+
+<h1>Driver Monitoring Report</h1>
+
+<h3>Closed Eye Events: {{ closed_eye }}</h3>
+<h3>Yawning Events: {{ yawning }}</h3>
+<h3>Mobile Usage Events: {{ mobile }}</h3>
+<h3>Distracted Events: {{ distracted }}</h3>
+
+<br>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Session Report</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Driver Monitoring Report</h1>
+
+    <h3>Closed Eye Events : {{ closed_eye }}</h3>
+
+    <h3>Yawning Events : {{ yawning }}</h3>
+
+    <h3>Mobile Usage Events : {{ mobile }}</h3>
+
+    <h3>Distracted Events : {{ distracted }}</h3>
+
+    <br>
+
+</div>
+
+</body>
+</html>
+<button onclick="window.location.href='/'">
+    Back Home
+</button>
+
+</body>
+</html>
